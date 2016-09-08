@@ -33,7 +33,7 @@ extension ViewController: DRHTextFieldWithCharacterCountDelegate {
     func didBeginEditing() {
         print("begin editing")
     }
-    func didReachCharacterLimit(reach: Bool) {
+    func didReachCharacterLimit(_ reach: Bool) {
         if reach {
             print("limit reached")
         } else {
