@@ -15,17 +15,17 @@ protocol DRHTextFieldWithCharacterCountDelegate: class {
     func didBeginEditing()
     
     // another handy method to use
-    func didReachCharacterLimit(reach: Bool)
+    func didReachCharacterLimit(_ reach: Bool)
 }
 
 @IBDesignable class DRHTextFieldWithCharacterCount: UITextField {
     
-    private let countLabel = UILabel()
+    fileprivate let countLabel = UILabel()
     
     weak var drhDelegate: DRHTextFieldWithCharacterCountDelegate?
     
     @IBInspectable var lengthLimit: Int = 0
-    @IBInspectable var countLabelTextColor: UIColor = UIColor.blackColor()
+    @IBInspectable var countLabelTextColor: UIColor = UIColor.black
     
     weak var customDelegate: UITextFieldDelegate?
     
@@ -39,12 +39,12 @@ protocol DRHTextFieldWithCharacterCountDelegate: class {
         delegate = self
     }
     
-    private func setCountLabel() {
+    fileprivate func setCountLabel() {
         
-        rightViewMode = .Always
-        countLabel.font = font?.fontWithSize(10)
+        rightViewMode = .always
+        countLabel.font = font?.withSize(10)
         countLabel.textColor = countLabelTextColor
-        countLabel.textAlignment = .Left
+        countLabel.textAlignment = .left
         rightView = countLabel
         
         countLabel.text = initialCounterValue(text)
@@ -56,7 +56,7 @@ protocol DRHTextFieldWithCharacterCountDelegate: class {
         }
     }
     
-    private func initialCounterValue(text: String?) -> String {
+    fileprivate func initialCounterValue(_ text: String?) -> String {
         if let text = text {
             return "\(text.utf16.count)/\(lengthLimit)"
         } else {
@@ -64,7 +64,7 @@ protocol DRHTextFieldWithCharacterCountDelegate: class {
         }
     }
     
-    override func rightViewRectForBounds(bounds: CGRect) -> CGRect {
+    override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
         
         if lengthLimit > 0 {
             return CGRect(x: frame.width - 35, y: 0, width: 30, height: 30)
@@ -74,9 +74,9 @@ protocol DRHTextFieldWithCharacterCountDelegate: class {
 }
 
 extension DRHTextFieldWithCharacterCount: UITextFieldDelegate {
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
-        guard let text = textField.text where lengthLimit != 0 else { return true }
+        guard let text = textField.text , lengthLimit != 0 else { return true }
                 
         let newLength = text.utf16.count + string.utf16.count - range.length
         
@@ -85,13 +85,13 @@ extension DRHTextFieldWithCharacterCount: UITextFieldDelegate {
             drhDelegate?.didReachCharacterLimit(false)
         } else {
             drhDelegate?.didReachCharacterLimit(true)
-            UIView.animateWithDuration(0.1, animations: {
-                self.countLabel.transform = CGAffineTransformMakeScale(1.1, 1.1)
+            UIView.animate(withDuration: 0.1, animations: {
+                self.countLabel.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
                 
                 }, completion: { (finish) in
-                    UIView.animateWithDuration(0.1) {
-                        self.countLabel.transform = CGAffineTransformIdentity
-                    }
+                    UIView.animate(withDuration: 0.1, animations: {
+                        self.countLabel.transform = CGAffineTransform.identity
+                    }) 
             })
         }
         
@@ -100,11 +100,11 @@ extension DRHTextFieldWithCharacterCount: UITextFieldDelegate {
         return newLength <= lengthLimit
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         drhDelegate?.didEndEditing()
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         drhDelegate?.didBeginEditing()
     }
 }
